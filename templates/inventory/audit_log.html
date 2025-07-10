@@ -1,0 +1,29 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h2>Audit Logs</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Action</th>
+            <th>Object Type</th>
+            <th>Object ID</th>
+            <th>Description</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.user }}</td>
+            <td>{{ log.action_type }}</td>
+            <td>{{ log.object_type }}</td>
+            <td>{{ log.object_id }}</td>
+            <td>{{ log.description }}</td>
+            <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

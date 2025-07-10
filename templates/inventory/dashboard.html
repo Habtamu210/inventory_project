@@ -1,0 +1,40 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+{% if user.role == "EMPLOYEE" %}
+    <a class="btn btn-success mb-3" href="{% url 'create_request' %}">Request Item</a>
+{% endif %}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Requested By</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req.item }}</td>
+            <td>{{ req.employee }}</td>
+            <td>{{ req.status }}</td>
+            <td>{{ req.request_date|date:"Y-m-d H:i" }}</td>
+            <td>
+                {% if user.role == "DIRECTOR" and req.status == "PENDING_DIRECTOR" %}
+                    <a class="btn btn-success btn-sm" href="{% url 'approve_request' req.pk %}">Approve</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'reject_request' req.pk %}">Reject</a>
+                {% elif user.role == "INVENTORY_OFFICER" and req.status == "PENDING_OFFICER" %}
+                    <a class="btn btn-success btn-sm" href="{% url 'approve_request' req.pk %}">Approve</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'reject_request' req.pk %}">Reject</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
