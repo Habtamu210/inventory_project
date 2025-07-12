@@ -37,4 +37,6 @@ urlpatterns = [
     # Transactions (borrow/return)
     path('borrow/', views.borrow_item, name='borrow_item'),
     path('return/<int:pk>/', views.return_item, name='return_item'),
+    path('transactions/', views.manage_transactions, name='manage_transactions'),
+
 ]
