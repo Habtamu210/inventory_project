@@ -1,0 +1,46 @@
+{% extends "inventory/base.html" %}
+
+{% block title %}Borrow Item{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Borrow Item</h2>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    
+    <div class="mb-3">
+      <label for="{{ form.item.id_for_label }}" class="form-label">Item</label>
+      {{ form.item|as_widget(attrs={"class": "form-select"}) }}
+      {{ form.item.errors }}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.borrow_date.id_for_label }}" class="form-label">Borrow Date</label>
+      {{ form.borrow_date|as_widget(attrs={"class": "form-control"}) }}
+      {{ form.borrow_date.errors }}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.expected_return_date.id_for_label }}" class="form-label">Expected Return Date</label>
+      {{ form.expected_return_date|as_widget(attrs={"class": "form-control"}) }}
+      {{ form.expected_return_date.errors }}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.condition_on_borrow.id_for_label }}" class="form-label">Condition on Borrow</label>
+      {{ form.condition_on_borrow|as_widget(attrs={"class": "form-select"}) }}
+      {{ form.condition_on_borrow.errors }}
+    </div>
+    
+    <div class="mb-3">
+      <label for="{{ form.remarks.id_for_label }}" class="form-label">Remarks</label>
+      {{ form.remarks|as_widget(attrs={"class": "form-control", "rows": "3"}) }}
+      {{ form.remarks.errors }}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit Borrow Request</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

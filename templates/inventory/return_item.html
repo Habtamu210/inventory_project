@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Return Item{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Return Item</h2>
+
+  <div class="mb-3">
+    <strong>Item:</strong> {{ transaction.item.product.name }} (Serial: {{ transaction.item.serial_number }})
+  </div>
+  <div class="mb-3">
+    <strong>Borrowed on:</strong> {{ transaction.borrow_date }}
+  </div>
+  <div class="mb-3">
+    <strong>Expected return date:</strong> {{ transaction.expected_return_date }}
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="condition_on_return" class="form-label">Condition on Return</label>
+      <select name="condition_on_return" id="condition_on_return" class="form-select" required>
+        {% for choice, display in transaction.item.CONDITION_CHOICES %}
+          <option value="{{ choice }}">{{ display }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="remarks" class="form-label">Remarks (optional)</label>
+      <textarea name="remarks" id="remarks" rows="3" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Return Item</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

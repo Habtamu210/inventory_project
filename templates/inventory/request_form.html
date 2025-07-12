@@ -1,11 +1,9 @@
 {% extends 'inventory/base.html' %}
-
+{% block title %}New Request{% endblock %}
 {% block content %}
-<h2>Request an Item</h2>
-<form method="post">
-    {% csrf_token %}
+<h2>Request Item</h2>
+<form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Submit Request</button>
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+    <button class="btn btn-success" type="submit">Submit Request</button>
 </form>
 {% endblock %}

@@ -1,0 +1,15 @@
+<!-- notifications.html -->
+{% extends 'inventory/base.html' %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<h2>Notifications</h2>
+<ul class="list-group">
+    {% for note in notifications %}
+        <li class="list-group-item {% if not note.is_read %}list-group-item-warning{% endif %}">
+            <strong>{{ note.timestamp|date:"Y-m-d H:i" }}</strong>: {{ note.message }}
+        </li>
+    {% empty %}
+        <li class="list-group-item">No notifications</li>
+    {% endfor %}
+</ul>
+{% endblock %}

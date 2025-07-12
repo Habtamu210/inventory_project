@@ -1,36 +1,28 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from .models import (
-    User,
-    BusinessUnit,
-    ProductCategory,
-    UnitOfMeasurement,
-    Product,
-    Item,
-    Request,
-    RequestApproval,
-    Transaction,
-    Notification,
-    AuditLog,
+    User, BusinessUnit, ProductCategory, UnitOfMeasurement,
+    Product, Item, Request, RequestApproval,
+    Transaction, Notification, AuditLog
 )
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # -----------------------------
 # Custom User Admin
 # -----------------------------
-class UserAdmin(BaseUserAdmin):
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    model = User
     list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_staff')
-    list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
-    fieldsets = BaseUserAdmin.fieldsets + (
+    list_filter = ('role', 'is_staff', 'is_superuser')
+    fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('role',)}),
     )
-    add_fieldsets = BaseUserAdmin.add_fieldsets + (
+    add_fieldsets = UserAdmin.add_fieldsets + (
         (None, {'fields': ('role',)}),
     )
-
-admin.site.register(User, UserAdmin)
 
 # -----------------------------
-# Business Unit Admin
+# Business Unit
 # -----------------------------
 @admin.register(BusinessUnit)
 class BusinessUnitAdmin(admin.ModelAdmin):
@@ -38,7 +30,7 @@ class BusinessUnitAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 # -----------------------------
-# Product Category Admin
+# Product Category
 # -----------------------------
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(admin.ModelAdmin):
@@ -46,7 +38,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 # -----------------------------
-# Unit of Measurement Admin
+# Unit of Measurement
 # -----------------------------
 @admin.register(UnitOfMeasurement)
 class UnitOfMeasurementAdmin(admin.ModelAdmin):
@@ -54,34 +46,34 @@ class UnitOfMeasurementAdmin(admin.ModelAdmin):
     search_fields = ('name', 'abbreviation')
 
 # -----------------------------
-# Product Admin
+# Product
 # -----------------------------
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'unit_of_measurement', 'price_per_unit', 'reorder_level', 'is_active', 'quantity_in_stock')
-    list_filter = ('category', 'is_active')
+    list_filter = ('is_active', 'category')
     search_fields = ('name',)
 
 # -----------------------------
-# Item Admin
+# Item
 # -----------------------------
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('product', 'serial_number', 'status', 'condition', 'location', 'assigned_to', 'business_unit')
+    list_display = ('product', 'serial_number', 'condition', 'status', 'location', 'assigned_to', 'business_unit')
     list_filter = ('status', 'condition', 'business_unit')
     search_fields = ('serial_number',)
 
 # -----------------------------
-# Request Admin
+# Request
 # -----------------------------
 @admin.register(Request)
 class RequestAdmin(admin.ModelAdmin):
     list_display = ('product', 'employee', 'status', 'request_date', 'final_approval_date')
-    list_filter = ('status', 'request_date')
-    search_fields = ('employee__username', 'product__name')
+    list_filter = ('status',)
+    search_fields = ('product__name', 'employee__username')
 
 # -----------------------------
-# Request Approval Admin
+# Request Approval
 # -----------------------------
 @admin.register(RequestApproval)
 class RequestApprovalAdmin(admin.ModelAdmin):
@@ -89,30 +81,26 @@ class RequestApprovalAdmin(admin.ModelAdmin):
     list_filter = ('role', 'status')
 
 # -----------------------------
-# Transaction Admin
+# Transaction
 # -----------------------------
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('item', 'employee', 'borrow_date', 'expected_return_date', 'actual_return_date', 'status')
-    list_filter = ('status', 'borrow_date', 'actual_return_date')
+    list_filter = ('status',)
 
 # -----------------------------
-# Notification Admin
+# Notification
 # -----------------------------
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('recipient', 'message', 'is_read', 'timestamp')
-    list_filter = ('is_read', 'timestamp')
-    search_fields = ('recipient__username',)
+    list_filter = ('is_read',)
+    search_fields = ('recipient__username', 'message')
 
 # -----------------------------
-# Audit Log Admin
+# Audit Log
 # -----------------------------
 @admin.register(AuditLog)
 class AuditLogAdmin(admin.ModelAdmin):
     list_display = ('user', 'action_type', 'object_type', 'object_id', 'timestamp')
-    list_filter = ('action_type', 'object_type', 'timestamp')
-    search_fields = ('user__username', 'description')
-
-
-# Register your models here.
+    search_fields = ('user__username', 'action_type', 'object_type')
