@@ -5,11 +5,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
+from django.views.decorators.csrf import csrf_protect
 
 from .forms import (
     CustomUserCreationForm, CustomLoginForm,
     RequestForm, ProductForm, ItemForm,
-    TransactionForm
+    TransactionForm, AdminUserCreationForm
 )
 from .models import (
     User, BusinessUnit, Request, RequestApproval,
@@ -77,19 +78,23 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse('dashboard')
 
+@login_required
+@csrf_protect
 def register(request):
-    if request.user.is_authenticated:
+    if request.user.role != 'ADMIN':
+        messages.warning(request, 'You are not authorized to access the registration page.')
         return redirect('dashboard')
 
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = AdminUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('dashboard')
+            form.save()
+            messages.success(request, 'User registered successfully.')
+            return redirect('manage_users')
     else:
-        form = CustomUserCreationForm()
+        form = AdminUserCreationForm()
     return render(request, 'inventory/register.html', {'form': form})
+
 
 
 @login_required

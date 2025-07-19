@@ -25,6 +25,19 @@ class CustomLoginForm(AuthenticationForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
+# --- Admin User Creation Form ---
+class AdminUserCreationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'role']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['email']
+        user.set_unusable_password()  # Makes password not required
+        if commit:
+            user.save()
+        return user
 
 # --- Product and Related Forms ---
 class ProductForm(forms.ModelForm):
