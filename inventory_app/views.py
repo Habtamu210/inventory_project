@@ -88,7 +88,10 @@ def register(request):
     if request.method == 'POST':
         form = AdminUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.business_unit = form.cleaned_data['business_unit']
+            user.set_password(form.cleaned_data['password1'])  # optional; normally handled by form.save()
+            user.save()
             messages.success(request, 'User registered successfully.')
             return redirect('manage_users')
     else:

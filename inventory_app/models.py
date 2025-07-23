@@ -2,6 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
+class BusinessUnit(models.Model):
+    name = models.CharField(max_length=100)
+    director = models.OneToOneField(
+        'User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        limit_choices_to={'role': 'DIRECTOR'}
+    )
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('ADMIN', 'Admin'),
@@ -10,6 +24,7 @@ class User(AbstractUser):
         ('INVENTORY_OFFICER', 'Inventory Officer'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    business_unit = models.ForeignKey(BusinessUnit, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -17,19 +32,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-
-class BusinessUnit(models.Model):
-    name = models.CharField(max_length=100)
-    director = models.OneToOneField(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        limit_choices_to={'role': 'DIRECTOR'}
-    )
-
-    def __str__(self):
-        return self.name
 
 class ProductCategory(models.Model):
     name = models.CharField(max_length=100)
