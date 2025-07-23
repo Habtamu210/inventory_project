@@ -95,7 +95,45 @@ def register(request):
         form = AdminUserCreationForm()
     return render(request, 'inventory/register.html', {'form': form})
 
+# edit_user view to allow admin to edit user details
+@login_required
+@csrf_protect
+def edit_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = AdminUserCreationForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User updated successfully.')
+            return redirect('manage_users')
+    else:
+        form = AdminUserCreationForm(instance=user)
+    return render(request, 'inventory/edit_user.html', {'form': form, 'user': user})
 
+# delete_user view to allow admin to delete a user
+@login_required
+@csrf_protect
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    messages.success(request, 'User deleted successfully.')
+    return redirect('manage_users')
+
+#change_user_role view to allow admin to change user roles
+@login_required
+@csrf_protect
+def change_user_role(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        new_role = request.POST.get('role')
+        if new_role in dict(User.ROLE_CHOICES):
+            user.role = new_role
+            user.save()
+            messages.success(request, 'User role changed successfully.')
+        else:
+            messages.error(request, 'Invalid role selected.')
+        return redirect('manage_users')
+    return render(request, 'inventory/change_user_role.html', {'user': user})
 
 @login_required
 def notifications(request):
@@ -263,13 +301,14 @@ def borrow_item(request):
         if form.is_valid():
             transaction = form.save(commit=False)
             transaction.employee = request.user
+
             transaction.status = 'Borrowed'
             transaction.save()
 
             # Update item status to 'Assigned'
             item = transaction.item
             item.status = 'Assigned'
-            item.assigned_to = request.user
+            item.assigned_to = request.user.business_unit
             item.save()
 
             messages.success(request, f'You have borrowed {item.product.name} successfully.')

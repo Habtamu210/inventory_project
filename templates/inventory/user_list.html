@@ -7,6 +7,7 @@
         <tr>
             <th>Username</th>
             <th>Email</th>
+            <th>Business Unit</th>
             <th>Role</th>
             <th>Change Role</th>
         </tr>
@@ -16,8 +17,12 @@
         <tr>
             <td>{{ user.username }}</td>
             <td>{{ user.email }}</td>
+            <td>{{ user.business_unit }}</td>
             <td>{{ user.get_role_display }}</td>
             <td>
+                <a href="{% url 'edit_user' user.id %}">Edit</a>
+                <a href="{% url 'delete_user' user.id %}">Delete</a>
+                {% if user.is_active %}
                 <form method="post" action="{% url 'change_user_role' user.id %}">
                     {% csrf_token %}
                     <select name="role" class="form-select form-select-sm d-inline-block w-auto">

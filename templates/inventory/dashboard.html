@@ -12,6 +12,7 @@
         <tr>
             <th>Item</th>
             <th>Requested By</th>
+            <th>Business Unit</th>
             <th>Status</th>
             <th>Date</th>
             <th>Actions</th>
@@ -22,6 +23,7 @@
         <tr>
             <td>{{ req.item }}</td>
             <td>{{ req.employee }}</td>
+            <td>{{ req.employee.business_unit }}</td>
             <td>{{ req.status }}</td>
             <td>{{ req.request_date|date:"Y-m-d H:i" }}</td>
             <td>

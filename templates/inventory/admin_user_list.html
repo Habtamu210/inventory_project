@@ -21,6 +21,7 @@
             <td>{{ user.get_role_display }}</td>
             <td>
                 <a class="btn btn-primary btn-sm" href="{% url 'edit_user' user.id %}">Edit</a>
+                <a class="btn btn-secondary btn-sm" href="{% url 'change_user_role' user.id %}">Change Role</a>
                 <a class="btn btn-danger btn-sm" href="{% url 'delete_user' user.id %}">Delete</a>
             </td>
         </tr>

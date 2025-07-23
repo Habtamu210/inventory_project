@@ -1,0 +1,16 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+  <h2>Delete User</h2>
+  <p>Are you sure you want to delete user {{ user.username }}?</p>
+  <form method="post">
+    {% csrf_token %}
+   <button type="submit" style="padding: 8px 16px; background-color: green; color: white; border: none; border-radius: 4px;">
+  ✅ Confirm
+</button>
+<a href="{% url 'manage_users' %}" style="margin-left: 10px; color: red; text-decoration: none;">
+  ❌ Cancel
+</a>
+    </form>
+    <p class="text-muted">Note: Deleting a user will remove all their data and access from the system.</p>
+{% endblock %}

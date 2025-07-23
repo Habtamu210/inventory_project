@@ -29,7 +29,10 @@ urlpatterns = [
     path('items/add/', views.add_item, name='add_item'),
 
     # Users (Admin)
-    path('admin/users/', views.manage_users, name='manage_users'),
+    path('manage-users/', views.manage_users, name='manage_users'),
+    path('edit-user/<int:user_id>/', views.edit_user, name='edit_user'),
+    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('change-user-role/<int:user_id>/', views.change_user_role, name='change_user_role'),
 
     # Audit Logs
     path('audit-logs/', views.audit_logs, name='audit_logs'),

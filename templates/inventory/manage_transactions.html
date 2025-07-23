@@ -9,6 +9,7 @@
     <thead>
         <tr>
             <th>Item</th>
+            <th>Business Unit</th>
             <th>Borrower</th>
             <th>Status</th>
             <th>Actions</th>
@@ -18,6 +19,7 @@
     {% for transaction in transactions %}
         <tr>
             <td>{{ transaction.item.name }}</td>
+            <td>{{ transaction.business_unit }}</td>
             <td>{{ transaction.borrower.username }}</td>
             <td>{{ transaction.status }}</td>
             <td>
