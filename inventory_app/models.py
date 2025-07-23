@@ -14,6 +14,10 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+
 class BusinessUnit(models.Model):
     name = models.CharField(max_length=100)
     director = models.OneToOneField(

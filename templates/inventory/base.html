@@ -2,22 +2,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>{% block title %}Inventory System{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* Custom navbar background close to green */
+        .navbar-custom {
+            background-color: #41a3bb; /* a nice dark green */
+        }
+        /* Navbar brand font size and weight */
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        /* Navbar links color and hover effect */
+        .navbar-nav .nav-link {
+            color: #dcedc8; /* light greenish */
+            font-weight: 600;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #a5d6a7; /* lighter green on hover */
+        }
+        /* User info text */
+        .navbar-text {
+            font-weight: 600;
+            color: #c5e1a5;
+        }
+        /* Logout button styling */
+        .btn-logout {
+            border-color: #aed581;
+            color: #dcedc8;
+        }
+        .btn-logout:hover {
+            background-color: #aed581;
+            color: #1b5e20;
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'dashboard' %}">Inventory</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             {% if user.is_authenticated %}
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'notifications' %}">Notifications</a>
                 </li>
@@ -36,14 +76,14 @@
                 {% endif %}
             </ul>
 
-            <span class="navbar-text text-white me-3">
+            <span class="navbar-text me-3">
                 {{ user.get_full_name|default:user.username }} ({{ user.get_role_display }})
             </span>
 
             <!-- Secure logout form (POST) -->
             <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-light">Logout</button>
+                <button type="submit" class="btn btn-outline-light btn-logout">Logout</button>
             </form>
 
             {% else %}
