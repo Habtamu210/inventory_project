@@ -29,7 +29,7 @@ class CustomLoginForm(AuthenticationForm):
 class AdminUserCreationForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'role']
+        fields = ['first_name', 'last_name', 'email', 'business_unit', 'role']
 
     def save(self, commit=True):
         user = super().save(commit=False)
