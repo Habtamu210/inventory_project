@@ -2,6 +2,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
 from .models import Request, RequestApproval, Notification, AuditLog, User, BusinessUnit
+import logging
+
+logger = logging.getLogger(__name__)
 
 # -------------------------------------------------
 # Notify Director when a request is submitted
@@ -11,12 +14,15 @@ def notify_director_on_request(sender, instance, created, **kwargs):
     if created and instance.status == 'PENDING_DIRECTOR':
         try:
             director = instance.employee.business_unit.director
-            Notification.objects.create(
-                recipient=director,
-                message=f"New request from {instance.employee.username} for {instance.product.name}"
-            )
-        except AttributeError:
-            pass  # Business unit or director not assigned
+            if director is not None:
+                Notification.objects.create(
+                    recipient=director,
+                    message=f"New request from {instance.employee.username} for {instance.product.name}"
+                )
+            else:
+                logger.warning(f"No director assigned to business unit '{instance.employee.business_unit}' for request {instance.id}")
+        except AttributeError as e:
+            logger.error(f"Missing attribute when notifying director for request {instance.id}: {e}")
 
 # -------------------------------------------------
 # Notify next approver and employee after approval
@@ -36,8 +42,10 @@ def notify_after_approval(sender, instance, created, **kwargs):
                         recipient=officer,
                         message=f"Request #{req.id} approved by Director. Awaiting your action."
                     )
-            except Exception:
-                pass
+                else:
+                    logger.warning(f"No Inventory Officer found to notify for request {req.id}")
+            except Exception as e:
+                logger.error(f"Error notifying Inventory Officer for request {req.id}: {e}")
         elif instance.role == 'INVENTORY_OFFICER':
             Notification.objects.create(
                 recipient=req.employee,
@@ -77,4 +85,11 @@ def assign_director_to_unit(sender, instance, **kwargs):
             object_type='BusinessUnit',
             object_id=instance.id,
             description=f'User {instance.director.username} assigned as Director of {instance.name}'
+        )
+        AuditLog.objects.create(
+            user=instance.director,
+            action_type='Create',
+            object_type='BusinessUnit',
+            object_id=instance.id,
+            description=f'Business Unit {instance.name} created with Director {instance.director.username}'
         )
