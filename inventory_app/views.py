@@ -88,15 +88,16 @@ def register(request):
     if request.method == 'POST':
         form = AdminUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.business_unit = form.cleaned_data['business_unit']
-            user.set_password(form.cleaned_data['password1'])  # optional; normally handled by form.save()
-            user.save()
+            user = form.save()  # Automatically sets and hashes the password via UserCreationForm
             messages.success(request, 'User registered successfully.')
             return redirect('manage_users')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = AdminUserCreationForm()
+
     return render(request, 'inventory/register.html', {'form': form})
+
 
 # edit_user view to allow admin to edit user details
 @login_required

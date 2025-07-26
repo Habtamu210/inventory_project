@@ -6,35 +6,46 @@ from .models import (
 )
 from inventory_app import models
 
-# --- User Forms ---
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
+from .models import User
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 'business_unit', 'role', 'password1', 'password2')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'role')
+        fields = ('username', 'email', 'first_name', 'last_name', 'business_unit', 'role')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
 
 class CustomLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
 
-# --- Admin User Creation Form ---
-class AdminUserCreationForm(forms.ModelForm):
+class AdminUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'business_unit', 'role']
+        fields = ['email', 'first_name', 'last_name', 'business_unit', 'role', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['email']
-        user.set_unusable_password()  # Makes password not required
+        email = self.cleaned_data['email'].lower()
+        user.email = email
+        user.username = email  # Ensure username is email
         if commit:
             user.save()
         return user
@@ -106,7 +117,6 @@ class TransactionForm(forms.ModelForm):
             'remarks',
         ]
         widgets = {
-           
             'expected_return_date': forms.DateInput(attrs={'type': 'date'}),
             'remarks': forms.Textarea(attrs={'rows': 3}),
         }
