@@ -1,41 +1,45 @@
 {% extends "inventory/base.html" %}
+{% load form_tags %}
 
 {% block title %}Register New User{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2 class="mb-4">Register New User</h2>
+<div class="container-sm mt-1 d-flex justify-content-left align-items-center">
+  <div style="width: 100%; max-width: 420px;">
+    <h5 class="mb-3">Register New User</h5>
 
-  <!-- Display messages -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} small py-1 my-1">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
 
-  <!-- Display form validation errors -->
-  {% if form.errors %}
-    <div class="alert alert-danger">Please correct the errors below.</div>
-  {% endif %}
+    {% if form.errors %}
+      <div class="alert alert-danger small py-1">Please correct the errors below.</div>
+    {% endif %}
 
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
 
-    {% for field in form %}
-      <div class="mb-3">
-        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-          <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-        <div class="text-danger">{{ field.errors }}</div>
-      </div>
-    {% endfor %}
+      {% for field in form %}
+        <div class="mb-2">
+          <label for="{{ field.id_for_label }}" class="form-label small">{{ field.label }}</label>
+          {% if field.name == 'business_unit' %}
+            {{ field|add_class:"form-select form-select-sm" }}
+          {% else %}
+            {{ field|add_class:"form-control form-control-sm" }}
+          {% endif %}
+          {% if field.help_text and field.name not in 'password1 password2' %}
+            <div class="form-text small">{{ field.help_text }}</div>
+          {% endif %}
+          <div class="text-danger small">{{ field.errors }}</div>
+        </div>
+      {% endfor %}
 
-    <button type="submit" class="btn btn-primary">Register</button>
-    <a href="{% url 'manage_users' %}" class="btn btn-secondary ms-2">Cancel</a>
-  </form>
+      <button type="submit" class="btn btn-sm btn-primary">Register</button>
+      <a href="{% url 'manage_users' %}" class="btn btn-sm btn-secondary ms-2">Cancel</a>
+    </form>
+  </div>
 </div>
 {% endblock %}
-

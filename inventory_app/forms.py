@@ -36,7 +36,28 @@ class CustomLoginForm(AuthenticationForm):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
 
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import User
+
 class AdminUserCreationForm(UserCreationForm):
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control form-control-sm',  # minimized height
+            'placeholder': 'Enter password'
+        }),
+        help_text=None
+    )
+    password2 = forms.CharField(
+        label="Password confirmation",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control form-control-sm',
+            'placeholder': 'Confirm password'
+        }),
+        help_text=None
+    )
+
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'business_unit', 'role', 'password1', 'password2']
